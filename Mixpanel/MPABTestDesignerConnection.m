@@ -17,9 +17,8 @@
 #import "MPSwizzler.h"
 #import "MPResources.h"
 
-#define CONNECTIVITY_INDICATOR_SIZE 50
-
 NSString * const kSessionVariantKey = @"session_variant";
+static const int connectivityIndicatorSize = 50;
 
 @interface MPABTestDesignerConnection () <MPWebSocketDelegate>
 @property (strong, nonatomic) UIWindow *connectivityIndicatorWindow;
@@ -47,6 +46,7 @@ NSString * const kSessionVariantKey = @"session_variant";
     UIDynamicAnimator *indicatorAnimator;
     void (^_connectCallback)();
     void (^_disconnectCallback)();
+    
 }
 
 - (instancetype)initWithURL:(NSURL *)url keepTrying:(BOOL)keepTrying connectCallback:(void (^)())connectCallback disconnectCallback:(void (^)())disconnectCallback
@@ -260,12 +260,12 @@ NSString * const kSessionVariantKey = @"session_variant";
 - (void)showConnectedView
 {
     if (!self.connectivityIndicatorWindow) {
-        self.connectivityIndicatorWindow = [[UIWindow alloc] initWithFrame:CGRectMake(0, 20, CONNECTIVITY_INDICATOR_SIZE, CONNECTIVITY_INDICATOR_SIZE)];
+        self.connectivityIndicatorWindow = [[UIWindow alloc] initWithFrame:CGRectMake(0, 20, connectivityIndicatorSize, connectivityIndicatorSize)];
         self.connectivityIndicatorWindow.backgroundColor = [UIColor clearColor];
         self.connectivityIndicatorWindow.windowLevel = UIWindowLevelAlert;
         self.connectivityIndicatorWindow.alpha = 0;
-        [self.connectivityIndicatorWindow setHidden:NO];
-        UIImageView *bubbleView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, CONNECTIVITY_INDICATOR_SIZE, CONNECTIVITY_INDICATOR_SIZE)];
+        self.connectivityIndicatorWindow.hidden = NO;
+        UIImageView *bubbleView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, connectivityIndicatorSize, connectivityIndicatorSize)];
         bubbleView.contentMode = UIViewContentModeScaleAspectFill;
         bubbleView.image = [MPResources imageNamed:@"MPConnectivityIndicator"];
         [self.connectivityIndicatorWindow addSubview:bubbleView];
@@ -283,8 +283,10 @@ NSString * const kSessionVariantKey = @"session_variant";
 - (void)hideConnectedView
 {
     if (self.connectivityIndicatorWindow) {
-        [self.connectivityIndicatorWindow setHidden:YES];
+        self.connectivityIndicatorWindow.hidden = YES;
     }
+    
+    indicatorAnimator = nil;
     self.connectivityIndicatorWindow = nil;
 }
 
@@ -306,7 +308,7 @@ NSString * const kSessionVariantKey = @"session_variant";
             CGPoint velocity = [gesture velocityInView:mainWindow];
             CGFloat magnitude = sqrt((velocity.x * velocity.x) + (velocity.y * velocity.y));
             
-            UICollisionBehavior* collisionBehavior = [[UICollisionBehavior alloc] initWithItems:@[self.connectivityIndicatorWindow]];
+            UICollisionBehavior *collisionBehavior = [[UICollisionBehavior alloc] initWithItems:@[self.connectivityIndicatorWindow]];
             UIBezierPath *path = [UIBezierPath bezierPathWithRect:[UIScreen mainScreen].bounds];
             [collisionBehavior addBoundaryWithIdentifier:@"border" forPath:path];
             [indicatorAnimator addBehavior:collisionBehavior];
@@ -314,7 +316,7 @@ NSString * const kSessionVariantKey = @"session_variant";
             UIPushBehavior *pushBehavior = [[UIPushBehavior alloc]
                                             initWithItems:@[self.connectivityIndicatorWindow]
                                             mode:UIPushBehaviorModeInstantaneous];
-            pushBehavior.pushDirection = CGVectorMake((velocity.x / 10) , (velocity.y / 10));
+            pushBehavior.pushDirection = CGVectorMake(velocity.x, velocity.y);
             pushBehavior.magnitude = magnitude / 500;
             [indicatorAnimator addBehavior:pushBehavior];
             
@@ -325,7 +327,15 @@ NSString * const kSessionVariantKey = @"session_variant";
             break;
         }
         case UIGestureRecognizerStateChanged: {
-            gesture.view.center = CGPointMake(MIN(MAX(gesture.view.center.x + (currPoint.x - indicatorPrevPoint.x),CONNECTIVITY_INDICATOR_SIZE/2),[UIScreen mainScreen].bounds.size.width - CONNECTIVITY_INDICATOR_SIZE/2), MIN(MAX(gesture.view.center.y + (currPoint.y - indicatorPrevPoint.y),CONNECTIVITY_INDICATOR_SIZE/2),[UIScreen mainScreen].bounds.size.height - CONNECTIVITY_INDICATOR_SIZE/2));
+            CGFloat newCenterX = MIN(
+                                     MAX(gesture.view.center.x + (currPoint.x - indicatorPrevPoint.x), connectivityIndicatorSize/2),
+                                     [UIScreen mainScreen].bounds.size.width - connectivityIndicatorSize/2
+                                     );
+            CGFloat newCenterY = MIN(
+                                     MAX(gesture.view.center.y + (currPoint.y - indicatorPrevPoint.y), connectivityIndicatorSize/2),
+                                     [UIScreen mainScreen].bounds.size.height - connectivityIndicatorSize/2
+                                     );
+            gesture.view.center = CGPointMake(newCenterX, newCenterY);
             break;
         }
         default:
