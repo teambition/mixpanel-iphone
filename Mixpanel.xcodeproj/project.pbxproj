@@ -185,6 +185,9 @@
 		7C170D4E1A4A05BE00D9E0F2 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C170D4D1A4A05BE00D9E0F2 /* QuartzCore.framework */; };
 		E115E0151CCAEDFD0026CFC0 /* Mixpanel+AutomaticEvents.h in Headers */ = {isa = PBXBuildFile; fileRef = 51C3B2381CA5B2D3004CE37C /* Mixpanel+AutomaticEvents.h */; };
 		E115E0161CCAEE060026CFC0 /* AutomaticEventsConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 51C3B2391CA5B2D3004CE37C /* AutomaticEventsConstants.h */; };
+		E18585121CDBCE04009E905C /* MPConnectivityIndicator.png in Resources */ = {isa = PBXBuildFile; fileRef = E185850F1CDBCE04009E905C /* MPConnectivityIndicator.png */; };
+		E18585131CDBCE04009E905C /* MPConnectivityIndicator@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = E18585101CDBCE04009E905C /* MPConnectivityIndicator@2x.png */; };
+		E18585141CDBCE04009E905C /* MPConnectivityIndicator@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = E18585111CDBCE04009E905C /* MPConnectivityIndicator@3x.png */; };
 		E1954F951CC559E000B92B19 /* MPNotification~ipad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E1954F921CC559E000B92B19 /* MPNotification~ipad.storyboard */; };
 		E1954F961CC559E000B92B19 /* MPNotification~iphonelandscape.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E1954F931CC559E000B92B19 /* MPNotification~iphonelandscape.storyboard */; };
 		E1954F971CC559E000B92B19 /* MPNotification~iphoneportrait.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E1954F941CC559E000B92B19 /* MPNotification~iphoneportrait.storyboard */; };
@@ -362,6 +365,9 @@
 		7C170D491A4A05AF00D9E0F2 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		7C170D4B1A4A05B400D9E0F2 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		7C170D4D1A4A05BE00D9E0F2 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		E185850F1CDBCE04009E905C /* MPConnectivityIndicator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MPConnectivityIndicator.png; sourceTree = "<group>"; };
+		E18585101CDBCE04009E905C /* MPConnectivityIndicator@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "MPConnectivityIndicator@2x.png"; sourceTree = "<group>"; };
+		E18585111CDBCE04009E905C /* MPConnectivityIndicator@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "MPConnectivityIndicator@3x.png"; sourceTree = "<group>"; };
 		E1954F921CC559E000B92B19 /* MPNotification~ipad.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "MPNotification~ipad.storyboard"; sourceTree = "<group>"; };
 		E1954F931CC559E000B92B19 /* MPNotification~iphonelandscape.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "MPNotification~iphonelandscape.storyboard"; sourceTree = "<group>"; };
 		E1954F941CC559E000B92B19 /* MPNotification~iphoneportrait.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "MPNotification~iphoneportrait.storyboard"; sourceTree = "<group>"; };
@@ -421,6 +427,9 @@
 				514733CF1CD7D6EC0098B23A /* MPCloseButton@3x.png */,
 				514733D01CD7D6EC0098B23A /* MPDismissKeyboard.png */,
 				514733D11CD7D6EC0098B23A /* MPDismissKeyboard@2x.png */,
+				E185850F1CDBCE04009E905C /* MPConnectivityIndicator.png */,
+				E18585101CDBCE04009E905C /* MPConnectivityIndicator@2x.png */,
+				E18585111CDBCE04009E905C /* MPConnectivityIndicator@3x.png */,
 			);
 			name = Images;
 			path = Mixpanel/Images;
@@ -964,6 +973,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E18585131CDBCE04009E905C /* MPConnectivityIndicator@2x.png in Resources */,
 				514733D31CD7D6EC0098B23A /* MPArrowLeft@2x.png in Resources */,
 				514733DB1CD7D6EC0098B23A /* MPDismissKeyboard.png in Resources */,
 				7C170D161A4A035F00D9E0F2 /* MPSurvey.storyboard in Resources */,
@@ -976,6 +986,8 @@
 				514733D91CD7D6EC0098B23A /* MPCloseButton@2x.png in Resources */,
 				514733DC1CD7D6EC0098B23A /* MPDismissKeyboard@2x.png in Resources */,
 				514733D41CD7D6EC0098B23A /* MPArrowRight.png in Resources */,
+				E18585121CDBCE04009E905C /* MPConnectivityIndicator.png in Resources */,
+				E18585141CDBCE04009E905C /* MPConnectivityIndicator@3x.png in Resources */,
 				E1954F951CC559E000B92B19 /* MPNotification~ipad.storyboard in Resources */,
 				514733D21CD7D6EC0098B23A /* MPArrowLeft.png in Resources */,
 				514733D71CD7D6EC0098B23A /* MPCheckmark@2x.png in Resources */,

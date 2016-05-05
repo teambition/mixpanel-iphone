@@ -15,11 +15,14 @@
 #import "MPDesignerSessionCollection.h"
 #import "MPLogger.h"
 #import "MPSwizzler.h"
+#import "MPResources.h"
+
+#define CONNECTIVITY_INDICATOR_SIZE 50
 
 NSString * const kSessionVariantKey = @"session_variant";
 
 @interface MPABTestDesignerConnection () <MPWebSocketDelegate>
-
+@property (strong, nonatomic) UIWindow *connectivityIndicatorWindow;
 @end
 
 @implementation MPABTestDesignerConnection
@@ -40,7 +43,8 @@ NSString * const kSessionVariantKey = @"session_variant";
     NSDictionary *_typeToMessageClassMap;
     MPWebSocket *_webSocket;
     NSOperationQueue *_commandQueue;
-    UIView *_recordingView;
+    CGPoint indicatorPrevPoint;
+    UIDynamicAnimator *indicatorAnimator;
     void (^_connectCallback)();
     void (^_disconnectCallback)();
 }
@@ -255,21 +259,78 @@ NSString * const kSessionVariantKey = @"session_variant";
 
 - (void)showConnectedView
 {
-    if(!_recordingView) {
-        UIWindow *mainWindow = [[UIApplication sharedApplication] delegate].window;
-        _recordingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, mainWindow.frame.size.width, 1.0)];
-        _recordingView.backgroundColor = [UIColor colorWithRed:4/255.0f green:180/255.0f blue:4/255.0f alpha:1.0];
-        [mainWindow addSubview:_recordingView];
-        [mainWindow bringSubviewToFront:_recordingView];
+    if (!self.connectivityIndicatorWindow) {
+        self.connectivityIndicatorWindow = [[UIWindow alloc] initWithFrame:CGRectMake(0, 20, CONNECTIVITY_INDICATOR_SIZE, CONNECTIVITY_INDICATOR_SIZE)];
+        self.connectivityIndicatorWindow.backgroundColor = [UIColor clearColor];
+        self.connectivityIndicatorWindow.windowLevel = UIWindowLevelAlert;
+        self.connectivityIndicatorWindow.alpha = 0;
+        [self.connectivityIndicatorWindow setHidden:NO];
+        UIImageView *bubbleView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, CONNECTIVITY_INDICATOR_SIZE, CONNECTIVITY_INDICATOR_SIZE)];
+        bubbleView.contentMode = UIViewContentModeScaleAspectFill;
+        bubbleView.image = [MPResources imageNamed:@"MPConnectivityIndicator"];
+        [self.connectivityIndicatorWindow addSubview:bubbleView];
+        
+        UIPanGestureRecognizer *panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(moveConnectivityIndicator:)];
+        [self.connectivityIndicatorWindow addGestureRecognizer:panRecognizer];
+        indicatorAnimator = [[UIDynamicAnimator alloc] initWithReferenceView:self.connectivityIndicatorWindow];
+        
+        [UIView animateWithDuration:0.3 animations:^{
+            self.connectivityIndicatorWindow.alpha = 1;
+        }];
     }
 }
 
 - (void)hideConnectedView
 {
-    if (_recordingView) {
-        [_recordingView removeFromSuperview];
+    if (self.connectivityIndicatorWindow) {
+        [self.connectivityIndicatorWindow setHidden:YES];
     }
-    _recordingView = nil;
+    self.connectivityIndicatorWindow = nil;
+}
+
+- (void)moveConnectivityIndicator:(UIPanGestureRecognizer *)gesture
+{
+    if (!self.connectivityIndicatorWindow) {
+        return;
+    }
+    
+    CGPoint currPoint = [gesture locationInView:gesture.view];
+    switch (gesture.state) {
+        case UIGestureRecognizerStateBegan: {
+            [indicatorAnimator removeAllBehaviors];
+            indicatorPrevPoint = currPoint;
+            break;
+        }
+        case UIGestureRecognizerStateEnded: {
+            UIWindow *mainWindow = [UIApplication sharedApplication].keyWindow;
+            CGPoint velocity = [gesture velocityInView:mainWindow];
+            CGFloat magnitude = sqrt((velocity.x * velocity.x) + (velocity.y * velocity.y));
+            
+            UICollisionBehavior* collisionBehavior = [[UICollisionBehavior alloc] initWithItems:@[self.connectivityIndicatorWindow]];
+            UIBezierPath *path = [UIBezierPath bezierPathWithRect:[UIScreen mainScreen].bounds];
+            [collisionBehavior addBoundaryWithIdentifier:@"border" forPath:path];
+            [indicatorAnimator addBehavior:collisionBehavior];
+            
+            UIPushBehavior *pushBehavior = [[UIPushBehavior alloc]
+                                            initWithItems:@[self.connectivityIndicatorWindow]
+                                            mode:UIPushBehaviorModeInstantaneous];
+            pushBehavior.pushDirection = CGVectorMake((velocity.x / 10) , (velocity.y / 10));
+            pushBehavior.magnitude = magnitude / 500;
+            [indicatorAnimator addBehavior:pushBehavior];
+            
+            UIDynamicItemBehavior *itemBehavior = [[UIDynamicItemBehavior alloc] initWithItems:@[self.connectivityIndicatorWindow]];
+            itemBehavior.resistance = 10;
+            itemBehavior.allowsRotation = NO;
+            [indicatorAnimator addBehavior:itemBehavior];
+            break;
+        }
+        case UIGestureRecognizerStateChanged: {
+            gesture.view.center = CGPointMake(MIN(MAX(gesture.view.center.x + (currPoint.x - indicatorPrevPoint.x),CONNECTIVITY_INDICATOR_SIZE/2),[UIScreen mainScreen].bounds.size.width - CONNECTIVITY_INDICATOR_SIZE/2), MIN(MAX(gesture.view.center.y + (currPoint.y - indicatorPrevPoint.y),CONNECTIVITY_INDICATOR_SIZE/2),[UIScreen mainScreen].bounds.size.height - CONNECTIVITY_INDICATOR_SIZE/2));
+            break;
+        }
+        default:
+            break;
+    }
 }
 
 @end
