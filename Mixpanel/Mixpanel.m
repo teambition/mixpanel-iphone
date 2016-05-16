@@ -164,7 +164,10 @@ static Mixpanel *sharedInstance = nil;
         self.showNetworkActivityIndicator = YES;
         self.useIPAddressForGeoLocation = YES;
 
-        self.serverURL = @"https://api.mixpanel.com";
+//        self.serverURL = @"https://api.mixpanel.com";
+        // Teambition: Change serverURL to our own url
+        self.serverURL = @"https://gta.teambition.com/v1/track";
+        
         self.decideURL = @"https://decide.mixpanel.com";
         self.switchboardURL = @"wss://switchboard.mixpanel.com";
 
