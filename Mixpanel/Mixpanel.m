@@ -166,7 +166,7 @@ static Mixpanel *sharedInstance = nil;
 
 //        self.serverURL = @"https://api.mixpanel.com";
         // Teambition: Change serverURL to our own url
-        self.serverURL = @"https://gta.teambition.com/v1/track";
+        self.serverURL = @"https://gta.teambition.com/v1";
         
         self.decideURL = @"https://decide.mixpanel.com";
         self.switchboardURL = @"wss://switchboard.mixpanel.com";
@@ -714,13 +714,15 @@ static __unused NSString *MPURLEncode(NSString *s)
         NSString *postBody = [NSString stringWithFormat:@"ip=%d&data=%@", self.useIPAddressForGeoLocation, requestData];
         MixpanelDebug(@"%@ flushing %lu of %lu to %@: %@", self, (unsigned long)[batch count], (unsigned long)[queue count], endpoint, queue);
         NSURLRequest *request = [self apiRequestWithEndpoint:endpoint andBody:postBody];
+        
+        NSLog(@"Mixpanel request url = %@", request.URL);
         NSError *error = nil;
 
         [self updateNetworkActivityIndicator:YES];
         
         NSHTTPURLResponse *urlResponse = nil;
         NSData *responseData = [NSURLConnection sendSynchronousRequest:request returningResponse:&urlResponse error:&error];
-
+        
         [self updateNetworkActivityIndicator:NO];
         
         BOOL success = [self handleNetworkResponse:urlResponse withError:error];
@@ -756,6 +758,8 @@ static __unused NSString *MPURLEncode(NSString *s)
     
     MixpanelDebug(@"HTTP Response: %@", response.allHeaderFields);
     MixpanelDebug(@"HTTP Error: %@", error.localizedDescription);
+    
+    NSLog(@"Mixpanel response code = %@", @(response.statusCode));
     
     BOOL was5XX = (500 <= response.statusCode && response.statusCode <= 599) || (error != nil);
     if (was5XX) {
