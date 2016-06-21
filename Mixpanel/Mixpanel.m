@@ -166,7 +166,7 @@ static Mixpanel *sharedInstance = nil;
 
 //        self.serverURL = @"https://api.mixpanel.com";
         // Teambition: Change serverURL to our own url
-        self.serverURL = @"https://gta.teambition.com/v1";
+        self.serverURL = @"https://gta.teambition.net/v1";
         
         self.decideURL = @"https://decide.mixpanel.com";
         self.switchboardURL = @"wss://switchboard.mixpanel.com";
